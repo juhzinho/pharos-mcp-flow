@@ -1,0 +1,16 @@
+{
+  "name": "pharos-mcp-flow",
+  "version": "1.0.0",
+  "description": "A SkillEngine skill composed with the Pharos Chain MCP: one request (\"send 250 USDC to 0x…\") → the skill asks for exactly the chain data it needs, the Chain MCP supplies it live, and the skill decides GO / REVIEW / STOP with every reason citing the MCP call it came from.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": { "node": ">=20.12" },
+  "scripts": {
+    "flow": "node tasks/flow/flow.js",
+    "web": "node scripts/dev-server.js",
+    "test": "node --test test/*.test.js",
+    "test:e2e": "node test/e2e.js"
+  },
+  "dependencies": { "viem": "^2.57.5", "@modelcontextprotocol/sdk": "^1.20.0" }
+}

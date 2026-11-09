@@ -1,0 +1,776 @@
+{
+  "recordedAt": "2026-11-09T19:16:04.388Z",
+  "network": "Pharos Pacific Mainnet",
+  "via": "Pharos Chain MCP",
+  "note": null,
+  "request": "send 25 USDC from 0x08cd62babd8Dac7404504792Df30C12fC5384Df5 to 0x884B9Cee8b6c3Ba3A2aAF9842BEbCd8aB4c25515",
+  "intent": {
+    "text": "send 25 USDC from 0x08cd62babd8Dac7404504792Df30C12fC5384Df5 to 0x884B9Cee8b6c3Ba3A2aAF9842BEbCd8aB4c25515",
+    "action": "transfer",
+    "token": "USDC",
+    "tokenAddress": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+    "decimals": 6,
+    "amount": "25",
+    "units": "25000000",
+    "from": "0x08cd62babd8Dac7404504792Df30C12fC5384Df5",
+    "to": "0x884B9Cee8b6c3Ba3A2aAF9842BEbCd8aB4c25515"
+  },
+  "chain": {
+    "head": 22589316,
+    "mcp": "https://mcp.pharos.xyz/mcp"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "purpose": "where the chain is",
+      "calls": [
+        "c1"
+      ]
+    },
+    {
+      "round": 2,
+      "purpose": "the two addresses, the money, the history",
+      "calls": [
+        "c2",
+        "c3",
+        "c4",
+        "c5",
+        "c6",
+        "c7",
+        "c8",
+        "c9",
+        "c10",
+        "c11",
+        "c12",
+        "c13",
+        "c14",
+        "c15",
+        "c16",
+        "c17",
+        "c18",
+        "c19",
+        "c20",
+        "c21",
+        "c22",
+        "c23",
+        "c24",
+        "c25",
+        "c26",
+        "c27",
+        "c28",
+        "c29",
+        "c30"
+      ]
+    },
+    {
+      "round": 3,
+      "purpose": "what round 2 raised, and the payment itself",
+      "calls": [
+        "c31",
+        "c32",
+        "c33",
+        "c34"
+      ]
+    }
+  ],
+  "calls": [
+    {
+      "id": "c1",
+      "round": 1,
+      "tool": "get_block_number",
+      "args": {},
+      "why": "the head block: which blocks the history reads cover",
+      "at": "2026-11-09T19:15:55.603Z",
+      "ms": 1846,
+      "ok": true,
+      "digest": "0xa8214f2710f4dcef",
+      "bytes": 64
+    },
+    {
+      "id": "c2",
+      "round": 2,
+      "tool": "get_code",
+      "args": {
+        "address": "0x08cd62babd8Dac7404504792Df30C12fC5384Df5"
+      },
+      "why": "is the payer a plain wallet?",
+      "at": "2026-11-09T19:15:57.456Z",
+      "ms": 344,
+      "ok": true,
+      "digest": "0x9ca276855b9bc47c",
+      "bytes": 18
+    },
+    {
+      "id": "c3",
+      "round": 2,
+      "tool": "get_code",
+      "args": {
+        "address": "0x884B9Cee8b6c3Ba3A2aAF9842BEbCd8aB4c25515"
+      },
+      "why": "is the payee a wallet or a contract?",
+      "at": "2026-11-09T19:15:57.456Z",
+      "ms": 1881,
+      "ok": true,
+      "digest": "0x171ccf2513192567",
+      "bytes": 236
+    },
+    {
+      "id": "c4",
+      "round": 2,
+      "tool": "get_balance",
+      "args": {
+        "address": "0x08cd62babd8Dac7404504792Df30C12fC5384Df5"
+      },
+      "why": "PROS to pay gas (and the amount, for a PROS payment)",
+      "at": "2026-11-09T19:15:57.456Z",
+      "ms": 1862,
+      "ok": true,
+      "digest": "0x927d398be699c4d5",
+      "bytes": 198
+    },
+    {
+      "id": "c5",
+      "round": 2,
+      "tool": "get_transaction_count",
+      "args": {
+        "address": "0x08cd62babd8Dac7404504792Df30C12fC5384Df5"
+      },
+      "why": "the payer's next nonce, for the unsigned transaction",
+      "at": "2026-11-09T19:15:57.456Z",
+      "ms": 1859,
+      "ok": true,
+      "digest": "0xa2465d674a932300",
+      "bytes": 45
+    },
+    {
+      "id": "c6",
+      "round": 2,
+      "tool": "get_transaction_count",
+      "args": {
+        "address": "0x884B9Cee8b6c3Ba3A2aAF9842BEbCd8aB4c25515"
+      },
+      "why": "has the payee ever sent a transaction?",
+      "at": "2026-11-09T19:15:57.456Z",
+      "ms": 693,
+      "ok": true,
+      "digest": "0xb65c1abbc5e9d9b1",
+      "bytes": 39
+    },
+    {
+      "id": "c7",
+      "round": 2,
+      "tool": "get_gas_price",
+      "args": {},
+      "why": "the fee for the unsigned transaction",
+      "at": "2026-11-09T19:15:57.456Z",
+      "ms": 1037,
+      "ok": true,
+      "digest": "0xe2cac668ec5adfaf",
+      "bytes": 195
+    },
+    {
+      "id": "c8",
+      "round": 2,
+      "tool": "eth_call",
+      "args": {
+        "transaction": {
+          "to": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+          "data": "0x70a0823100000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        }
+      },
+      "why": "the payer's USDC balance",
+      "at": "2026-11-09T19:15:57.456Z",
+      "ms": 1611,
+      "ok": true,
+      "digest": "0xa965037a987785bd",
+      "bytes": 84
+    },
+    {
+      "id": "c9",
+      "round": 2,
+      "tool": "eth_call",
+      "args": {
+        "transaction": {
+          "to": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+          "data": "0xfe575a8700000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        }
+      },
+      "why": "is the payer blacklisted by USDC?",
+      "at": "2026-11-09T19:15:57.456Z",
+      "ms": 2122,
+      "ok": true,
+      "digest": "0x298b4744e92d2ff0",
+      "bytes": 84
+    },
+    {
+      "id": "c10",
+      "round": 2,
+      "tool": "eth_call",
+      "args": {
+        "transaction": {
+          "to": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+          "data": "0xfe575a87000000000000000000000000884b9cee8b6c3ba3a2aaf9842bebcd8ab4c25515"
+        }
+      },
+      "why": "is the payee blacklisted by USDC?",
+      "at": "2026-11-09T19:15:57.456Z",
+      "ms": 2446,
+      "ok": true,
+      "digest": "0x298b4744e92d2ff0",
+      "bytes": 84
+    },
+    {
+      "id": "c11",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22588317",
+        "toBlock": "22589316"
+      },
+      "why": "who the payer paid, blocks 22588317–22589316",
+      "at": "2026-11-09T19:15:57.456Z",
+      "ms": 2380,
+      "ok": true,
+      "digest": "0x35ba5309b16b8b6c",
+      "bytes": 1452
+    },
+    {
+      "id": "c12",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          null,
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22588317",
+        "toBlock": "22589316"
+      },
+      "why": "who sent to the payer, blocks 22588317–22589316",
+      "at": "2026-11-09T19:15:57.456Z",
+      "ms": 2448,
+      "ok": true,
+      "digest": "0x0243e2ab1925d974",
+      "bytes": 2177
+    },
+    {
+      "id": "c13",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22587317",
+        "toBlock": "22588316"
+      },
+      "why": "who the payer paid, blocks 22587317–22588316",
+      "at": "2026-11-09T19:15:57.456Z",
+      "ms": 2644,
+      "ok": true,
+      "digest": "0x54c814b0aadffd8f",
+      "bytes": 727
+    },
+    {
+      "id": "c14",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          null,
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22587317",
+        "toBlock": "22588316"
+      },
+      "why": "who sent to the payer, blocks 22587317–22588316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 3264,
+      "ok": true,
+      "digest": "0xf2bf8023cda06806",
+      "bytes": 2902
+    },
+    {
+      "id": "c15",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22586317",
+        "toBlock": "22587316"
+      },
+      "why": "who the payer paid, blocks 22586317–22587316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 2981,
+      "ok": true,
+      "digest": "0x84b586ae83e8a6af",
+      "bytes": 2903
+    },
+    {
+      "id": "c16",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          null,
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22586317",
+        "toBlock": "22587316"
+      },
+      "why": "who sent to the payer, blocks 22586317–22587316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 2975,
+      "ok": true,
+      "digest": "0xdcbe088e7e0f7c31",
+      "bytes": 1452
+    },
+    {
+      "id": "c17",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22585317",
+        "toBlock": "22586316"
+      },
+      "why": "who the payer paid, blocks 22585317–22586316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 4009,
+      "ok": true,
+      "digest": "0x5fc68f6f9bf20f01",
+      "bytes": 1452
+    },
+    {
+      "id": "c18",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          null,
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22585317",
+        "toBlock": "22586316"
+      },
+      "why": "who sent to the payer, blocks 22585317–22586316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 3850,
+      "ok": true,
+      "digest": "0xdbba7ac041c69992",
+      "bytes": 727
+    },
+    {
+      "id": "c19",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22584317",
+        "toBlock": "22585316"
+      },
+      "why": "who the payer paid, blocks 22584317–22585316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 3507,
+      "ok": true,
+      "digest": "0x518674ab2b227e5f",
+      "bytes": 2
+    },
+    {
+      "id": "c20",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          null,
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22584317",
+        "toBlock": "22585316"
+      },
+      "why": "who sent to the payer, blocks 22584317–22585316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 3788,
+      "ok": true,
+      "digest": "0x518674ab2b227e5f",
+      "bytes": 2
+    },
+    {
+      "id": "c21",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22583317",
+        "toBlock": "22584316"
+      },
+      "why": "who the payer paid, blocks 22583317–22584316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 4330,
+      "ok": true,
+      "digest": "0xd3a300459e0f3763",
+      "bytes": 4352
+    },
+    {
+      "id": "c22",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          null,
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22583317",
+        "toBlock": "22584316"
+      },
+      "why": "who sent to the payer, blocks 22583317–22584316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 4328,
+      "ok": true,
+      "digest": "0x53f7599dfefe0fa3",
+      "bytes": 5802
+    },
+    {
+      "id": "c23",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22582317",
+        "toBlock": "22583316"
+      },
+      "why": "who the payer paid, blocks 22582317–22583316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 4552,
+      "ok": true,
+      "digest": "0x6c3e34ea1b559ce2",
+      "bytes": 13052
+    },
+    {
+      "id": "c24",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          null,
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22582317",
+        "toBlock": "22583316"
+      },
+      "why": "who sent to the payer, blocks 22582317–22583316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 4567,
+      "ok": true,
+      "digest": "0x6b6087e6a5d2f584",
+      "bytes": 9427
+    },
+    {
+      "id": "c25",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22581317",
+        "toBlock": "22582316"
+      },
+      "why": "who the payer paid, blocks 22581317–22582316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 5488,
+      "ok": true,
+      "digest": "0xe9ee3e0fbcf9970a",
+      "bytes": 2902
+    },
+    {
+      "id": "c26",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          null,
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22581317",
+        "toBlock": "22582316"
+      },
+      "why": "who sent to the payer, blocks 22581317–22582316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 4862,
+      "ok": true,
+      "digest": "0x101d2210eb8f5050",
+      "bytes": 1452
+    },
+    {
+      "id": "c27",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22580317",
+        "toBlock": "22581316"
+      },
+      "why": "who the payer paid, blocks 22580317–22581316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 5449,
+      "ok": true,
+      "digest": "0xe49ec9f682140eb9",
+      "bytes": 7977
+    },
+    {
+      "id": "c28",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          null,
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22580317",
+        "toBlock": "22581316"
+      },
+      "why": "who sent to the payer, blocks 22580317–22581316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 5130,
+      "ok": true,
+      "digest": "0x13929f3c182982ee",
+      "bytes": 1452
+    },
+    {
+      "id": "c29",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22579317",
+        "toBlock": "22580316"
+      },
+      "why": "who the payer paid, blocks 22579317–22580316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 5394,
+      "ok": true,
+      "digest": "0x257f3334c7e6b1bf",
+      "bytes": 1452
+    },
+    {
+      "id": "c30",
+      "round": 2,
+      "tool": "get_logs",
+      "args": {
+        "address": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+          null,
+          "0x00000000000000000000000008cd62babd8dac7404504792df30c12fc5384df5"
+        ],
+        "fromBlock": "22579317",
+        "toBlock": "22580316"
+      },
+      "why": "who sent to the payer, blocks 22579317–22580316",
+      "at": "2026-11-09T19:15:57.457Z",
+      "ms": 6228,
+      "ok": true,
+      "digest": "0xd088263037d2caba",
+      "bytes": 1452
+    },
+    {
+      "id": "c31",
+      "round": 3,
+      "tool": "eth_call",
+      "args": {
+        "transaction": {
+          "to": "0x884B9Cee8b6c3Ba3A2aAF9842BEbCd8aB4c25515",
+          "data": "0x06fdde03"
+        }
+      },
+      "why": "the payee is a contract — is it a token? (name())",
+      "at": "2026-11-09T19:16:03.716Z",
+      "ms": 670,
+      "ok": false,
+      "error": "eth_call: execution reverted:"
+    },
+    {
+      "id": "c32",
+      "round": 3,
+      "tool": "eth_call",
+      "args": {
+        "transaction": {
+          "to": "0x884B9Cee8b6c3Ba3A2aAF9842BEbCd8aB4c25515",
+          "data": "0x95d89b41"
+        }
+      },
+      "why": "the payee is a contract — is it a token? (symbol())",
+      "at": "2026-11-09T19:16:03.716Z",
+      "ms": 638,
+      "ok": false,
+      "error": "eth_call: execution reverted:"
+    },
+    {
+      "id": "c33",
+      "round": 3,
+      "tool": "eth_call",
+      "args": {
+        "transaction": {
+          "to": "0x884B9Cee8b6c3Ba3A2aAF9842BEbCd8aB4c25515",
+          "data": "0x313ce567"
+        }
+      },
+      "why": "the payee is a contract — is it a token? (decimals())",
+      "at": "2026-11-09T19:16:03.716Z",
+      "ms": 520,
+      "ok": false,
+      "error": "eth_call: execution reverted:"
+    },
+    {
+      "id": "c34",
+      "round": 3,
+      "tool": "estimate_gas",
+      "args": {
+        "transaction": {
+          "from": "0x08cd62babd8Dac7404504792Df30C12fC5384Df5",
+          "to": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+          "data": "0xa9059cbb000000000000000000000000884b9cee8b6c3ba3a2aaf9842bebcd8ab4c2551500000000000000000000000000000000000000000000000000000000017d7840"
+        }
+      },
+      "why": "would the payment itself go through? (a revert is a reason)",
+      "at": "2026-11-09T19:16:03.716Z",
+      "ms": 569,
+      "ok": true,
+      "digest": "0xaf6fdd41a3aa6ebd",
+      "bytes": 43
+    }
+  ],
+  "history": {
+    "lookbackBlocks": 10000,
+    "token": "USDC",
+    "payments": 50,
+    "received": 37,
+    "knownPayees": [
+      {
+        "address": "0x884B9Cee8b6c3Ba3A2aAF9842BEbCd8aB4c25515",
+        "count": 49
+      },
+      {
+        "address": "0xFf70F4A1d11995621854F3692acF286d8aCd04b2",
+        "count": 1
+      }
+    ],
+    "lookalikes": []
+  },
+  "decision": {
+    "verdict": "GO",
+    "summary": "GO — send 25 USDC to 0x884B9Cee8b6c3Ba3A2aAF9842BEbCd8aB4c25515: the unsigned transaction is ready to sign.",
+    "reasons": [
+      {
+        "severity": "info",
+        "code": "payee-contract",
+        "text": "The payee is a contract (109 bytes of code) — one this wallet pays routinely.",
+        "evidence": [
+          "c3"
+        ]
+      },
+      {
+        "severity": "ok",
+        "code": "known-payee",
+        "text": "A known payee: this wallet paid it 49× in the last 10,000 blocks (typical 300 USDC).",
+        "evidence": [
+          "c11",
+          "c13",
+          "c15",
+          "c17",
+          "c21",
+          "c23",
+          "c29",
+          "c27",
+          "c25"
+        ]
+      },
+      {
+        "severity": "ok",
+        "code": "balance",
+        "text": "The payer holds 1,660.874377 USDC — enough.",
+        "evidence": [
+          "c8"
+        ]
+      },
+      {
+        "severity": "ok",
+        "code": "gas",
+        "text": "The payment estimates at 79,801 gas × 10 gwei = 0.000798 PROS.",
+        "evidence": [
+          "c34",
+          "c7"
+        ]
+      }
+    ],
+    "tx": {
+      "chainId": 1672,
+      "from": "0x08cd62babd8Dac7404504792Df30C12fC5384Df5",
+      "to": "0xC879C018dB60520F4355C26eD1a6D572cdAC1815",
+      "value": "0x0",
+      "data": "0xa9059cbb000000000000000000000000884b9cee8b6c3ba3a2aaf9842bebcd8ab4c2551500000000000000000000000000000000000000000000000000000000017d7840",
+      "nonce": 5993,
+      "gas": "0x17611",
+      "maxFeePerGas": "0x4a817c800",
+      "maxPriorityFeePerGas": "0x0",
+      "type": "0x2"
+    }
+  },
+  "ms": 8786
+}

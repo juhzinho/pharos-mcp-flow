@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pharos Pay Check</title>
+  <meta name="description" content="A SkillEngine skill composed with the Pharos Chain MCP: one request in plain words, the skill asks for exactly the chain data it needs, the Chain MCP supplies it live, and every reason in the verdict cites the call it came from." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --paper:#f1efe9; --card:#fffdf8; --ink:#17181c; --muted:#686a72; --line:#e0dbcf; --line-2:#cbc5b6; --brand:#0033ff; --skill:#5b2bd6; --skill-soft:#efe9fc; --mcp:#0b7a75; --mcp-soft:#e1f3f2; --ok:#1d7a4d; --ok-soft:#e3f2e8; --warn:#9a5b00; --warn-soft:#fbeed6; --bad:#c2311f; --bad-soft:#fbe6e2; --hl:#fff1a8; --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace; --sans:Inter,system-ui,-apple-system,"Segoe UI",sans-serif; }
+    * { box-sizing: border-box; }
+    html { color-scheme: light; }
+    body { margin: 0; font: 15px/1.5 var(--sans); color: var(--ink); background: var(--paper); }
+    a { color: var(--brand); }
+    .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+    .top { position: sticky; top: 0; z-index: 10; background: var(--paper); display: flex; align-items: center; gap: 16px; padding: 14px 40px; border-bottom: 1px solid var(--line); }
+    .brand { display: flex; gap: 10px; align-items: center; color: inherit; text-decoration: none; }
+    .brand b { font-size: 14px; letter-spacing: .12em; font-weight: 800; } .brand em { font-style: normal; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .1em; }
+    .spacer { flex: 1; } .links a { font-size: 13px; font-weight: 600; color: var(--ink); text-decoration: none; margin-right: 14px; }
+    .lang button { border: 1px solid var(--line-2); background: var(--card); padding: 6px 11px; font: 600 12px var(--sans); cursor: pointer; color: var(--ink); }
+    .lang button:first-child { border-radius: 999px 0 0 999px; } .lang button:last-child { border-radius: 0 999px 999px 0; border-left: 0; }
+    .lang button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+    main { max-width: 1160px; margin: 0 auto; padding: 40px 40px 24px; display: grid; gap: 22px; }
+    .kicker { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); margin: 0 0 10px; }
+    h1 { font-size: clamp(34px, 6vw, 56px); line-height: .95; letter-spacing: -.04em; margin: 0 0 12px; }
+    .lead { color: var(--muted); margin: 0; font-size: 17px; max-width: 68ch; }
+    section.panel { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; min-width: 0; }
+    .panel h2 { font-size: 17px; margin: 0 0 4px; letter-spacing: -.01em; }
+    .sub { color: var(--muted); font-size: 13.5px; margin: 0 0 16px; max-width: 88ch; }
+    .btn { padding: 9px 16px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font: 600 13px var(--sans); cursor: pointer; white-space: nowrap; }
+    .btn:disabled { opacity: .45; cursor: progress; }
+    .muted { color: var(--muted); } .err { color: var(--bad); }
+    .ask { display: flex; gap: 10px; flex-wrap: wrap; }
+    .ask input { flex: 1; min-width: 260px; padding: 11px 14px; border: 1px solid var(--line-2); border-radius: 12px; background: #fff; font: 13.5px var(--mono); color: var(--ink); }
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 0; }
+    .chips button { border: 1px solid var(--line-2); background: var(--card); color: var(--ink); border-radius: 999px; padding: 6px 12px; font: 600 12.5px var(--sans); cursor: pointer; }
+    .chips button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .chips .v { font: 700 10px var(--sans); letter-spacing: .06em; margin-left: 6px; }
+    .meta { font-size: 12.5px; color: var(--muted); margin: 14px 0 0; } .meta b { color: var(--ink); }
+    .note { font-size: 12.5px; background: var(--warn-soft); color: #6b4300; padding: 6px 10px; border-radius: 8px; margin-top: 8px; }
+    /* the two-lane flow */
+    .lanes { display: grid; grid-template-columns: 120px repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 16px; align-items: stretch; }
+    .lane-h { font: 700 11px var(--sans); letter-spacing: .08em; text-transform: uppercase; display: flex; align-items: center; }
+    .lane-h.s { color: var(--skill); } .lane-h.m { color: var(--mcp); }
+    .cell { border-radius: 10px; padding: 9px 11px; font-size: 12.5px; min-width: 0; position: relative; }
+    .cell.s { background: var(--skill-soft); } .cell.m { background: var(--mcp-soft); } .cell.empty { background: transparent; border: 1px dashed var(--line); }
+    .cell b { display: block; font-size: 12.5px; } .cell .n { font: 600 18px var(--mono); }
+    .cell.m::before { content: "↓"; position: absolute; top: -15px; left: 14px; color: var(--muted); font-size: 12px; }
+    .verdict { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 12px; margin-top: 16px; }
+    .verdict.GO { background: var(--ok-soft); } .verdict.REVIEW { background: var(--warn-soft); } .verdict.STOP { background: var(--bad-soft); }
+    .verdict .big { font: 800 22px var(--sans); letter-spacing: .06em; } .GO .big { color: var(--ok); } .REVIEW .big { color: var(--warn); } .STOP .big { color: var(--bad); }
+    .verdict p { margin: 2px 0 0; font-size: 13.5px; overflow-wrap: anywhere; }
+    .reasons { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; }
+    .reasons li { font-size: 13px; padding: 8px 10px; border-radius: 8px; border-left: 3px solid; overflow-wrap: anywhere; }
+    .reasons .stop { background: var(--bad-soft); border-color: var(--bad); } .reasons .review { background: var(--warn-soft); border-color: var(--warn); } .reasons .info { background: #f2f1ec; border-color: var(--line-2); } .reasons .ok { background: var(--ok-soft); border-color: var(--ok); }
+    .ev { display: inline-flex; flex-wrap: wrap; gap: 3px; margin-left: 4px; vertical-align: 1px; }
+    .ev button { border: 1px solid var(--mcp); background: #fff; color: var(--mcp); border-radius: 5px; padding: 0 5px; font: 600 10.5px var(--mono); cursor: pointer; line-height: 16px; }
+    .sev { font: 700 10px var(--sans); letter-spacing: .08em; text-transform: uppercase; margin-right: 6px; }
+    .code { background: #15161b; color: #e6e8ef; border-radius: 8px; padding: 10px 12px; font: 11.5px/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; margin-top: 8px; max-height: 260px; overflow: auto; }
+    details summary { cursor: pointer; color: var(--muted); font-size: 12.5px; margin-top: 12px; }
+    .calls { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+    .calls th { text-align: left; font: 600 10.5px var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 0 8px 6px 0; border-bottom: 1px solid var(--line-2); }
+    .calls td { padding: 5px 8px 5px 0; border-bottom: 1px dashed var(--line); vertical-align: top; overflow-wrap: anywhere; }
+    .calls tr.hl td { background: var(--hl); } .calls tr.bad td { color: var(--bad); }
+    .calls .t { font-family: var(--mono); color: var(--mcp); font-weight: 600; white-space: nowrap; }
+    .callwrap { max-height: 420px; overflow: auto; border: 1px solid var(--line); border-radius: 10px; padding: 0 10px; }
+    .diagram svg { width: 100%; height: auto; display: block; }
+    .steps { counter-reset: s; list-style: none; padding: 0; margin: 14px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .steps li { counter-increment: s; font-size: 13px; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+    .steps li::before { content: counter(s); display: inline-block; font: 700 12px var(--mono); background: var(--ink); color: #fff; border-radius: 6px; padding: 1px 7px; margin-right: 6px; }
+    .steps b { font-size: 13.5px; } .steps span { display: block; color: var(--muted); margin-top: 4px; }
+    footer { color: var(--muted); font-size: 12.5px; max-width: 1160px; margin: 0 auto; padding: 4px 40px 44px; } footer a { color: var(--muted); }
+    [hidden] { display: none !important; }
+    @media (max-width: 900px) { .steps { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .lanes { grid-template-columns: 70px repeat(4, minmax(0, 1fr)); } .cell { padding: 7px 8px; font-size: 11.5px; } }
+    @media (max-width: 680px) {
+      .top { padding: 12px 16px; } main { padding: 26px 16px 16px; } footer { padding: 4px 16px 32px; } .brand em, .links { display: none; } section.panel { padding: 16px; }
+      .steps { grid-template-columns: minmax(0, 1fr); } .lanes { grid-template-columns: repeat(4, minmax(0, 1fr)); } .lane-h { display: none; } .ask input { min-width: 0; }
+      .calls .hide-s { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="#"><svg width="22" height="22" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="8" fill="#0033ff"/><circle cx="12" cy="17" r="5" fill="#fff"/><circle cx="23" cy="17" r="5" fill="none" stroke="#fff" stroke-width="2.4"/></svg><span><b>PHAROS</b> <em>PAY CHECK · SKILL + CHAIN MCP</em></span></a>
+    <span class="spacer"></span>
+    <nav class="links"><a href="https://github.com/juhzinho/pharos-mcp-flow" target="_blank" rel="noopener">GitHub</a><a href="https://github.com/juhzinho/pharos-mcp-flow/blob/main/skill/pharos-pay-check/SKILL.md" target="_blank" rel="noopener">SKILL.md</a></nav>
+    <div class="lang"><button data-lang="en">EN</button><button data-lang="pt">PT</button></div>
+  </header>
+
+  <main>
+    <section>
+      <p class="kicker">SkillEngine · Chain MCP · Pharos Pacific</p>
+      <h1>Pay Check</h1>
+      <p class="lead" data-i="lead"></p>
+    </section>
+
+    <section class="panel">
+      <h2 data-i="runTitle"></h2>
+      <p class="sub" data-i="runSub"></p>
+      <form class="ask" id="ask"><input id="q" spellcheck="false" autocomplete="off" /><button class="btn" id="go" type="submit" data-i="go"></button></form>
+      <div class="chips" id="chips"></div>
+      <p class="muted" id="msg" style="font-size:13px;margin:8px 0 0"></p>
+      <div id="out"></div>
+    </section>
+
+    <section class="panel diagram">
+      <h2 data-i="dTitle"></h2>
+      <p class="sub" data-i="dSub"></p>
+      <div id="diagram"></div>
+      <ol class="steps" id="steps"></ol>
+    </section>
+  </main>
+  <footer id="footer"></footer>
+
+  <script type="module">
+    const T = {
+      en: {
+        lead: "One request in plain words — “send 25 USDC from 0x… to 0x…”. A SkillEngine skill decides whether it is safe to pay; the Pharos Chain MCP is its only window on the chain. The skill asks for exactly the data it needs, in rounds, and every reason in its verdict cites the MCP call it rests on.",
+        runTitle: "One request → Skill + Chain MCP → a verdict", runSub: "Pick a recorded run (live data, recorded on Pacific mainnet) or type your own and run it live. The payer in the examples is a real Pacific wallet that pays one contract routinely; nothing is signed or sent.",
+        go: "Run live", running: "Running: the skill is asking the Chain MCP… (~8–20 s)",
+        ex: { go: "known payee", new: "new payee", token: "to the USDC contract", balance: "more than it holds", lookalike: "look-alike address" },
+        meta: (n, s, h, when, live) => `<b>${n}</b> Chain MCP calls · ${s} s · head block <b>${h}</b> · ${when} · <b>${live ? "live" : "recorded"}</b>`,
+        lane: { s: "Skill", m: "Chain MCP" },
+        r1s: "Where is the chain?", r2s: "Who are they, how much, what history?", r3s: "Follow up on what round 2 showed — and estimate the payment", decide: "Decide, citing the calls",
+        calls: (n, ms) => `call${n > 1 ? "s" : ""} · ${ms} ms`, tools: (t) => t.join(", "),
+        sev: { stop: "stop", review: "review", info: "note", ok: "ok" },
+        txTitle: "Unsigned transaction (the payer's wallet signs it)", callsTitle: "Every Chain MCP call, in order (click a [c…] above to find it)",
+        cols: ["id", "round", "tool", "arguments", "why", "ms", "answer"],
+        dTitle: "What calls what, and in what order", dSub: "The skill never touches the chain itself: it declares which Chain MCP calls it needs, the flow runs them, and the skill decides from the answers. Round 3 only exists because of what round 2 returned — that is the composition.",
+        steps: [["The request", "parseRequest turns the words into an intent: payer, payee, token, exact amount. Unclear → an error before any call."], ["Round 1 — Skill → MCP", "get_block_number: the head block, so the skill knows which blocks its history covers."], ["Round 2 — Skill → MCP", "get_code ×2, get_balance, get_transaction_count ×2, get_gas_price, eth_call (balance, USDC blacklist), get_logs ×2 per 1,000 blocks (who the payer paid / who paid the payer)."], ["Digest — Skill only", "Known payees and how much they usually get; look-alikes of known payees (same first and last characters)."], ["Round 3 — Skill → MCP", "Only what round 2 raised: name()/symbol()/decimals() if the payee is a contract (a token?), the look-alike's footprint, and estimate_gas for the payment itself."], ["Decide — Skill", "GO / REVIEW / STOP, every reason citing call ids; the unsigned transaction unless STOP."]],
+        footer: "Data from Pharos Pacific Mainnet through the Pharos Chain MCP (mcp.pharos.xyz). Nothing on this page signs or sends a transaction.",
+        errNet: "Could not reach the flow. Try again in a minute.",
+      },
+      pt: {
+        lead: "Um pedido em palavras — “enviar 25 USDC de 0x… para 0x…”. Uma skill do SkillEngine decide se é seguro pagar; o Chain MCP da Pharos é a única janela dela para a rede. A skill pede exatamente os dados de que precisa, em rodadas, e cada motivo do veredito cita a chamada MCP em que se apoia.",
+        runTitle: "Um pedido → Skill + Chain MCP → um veredito", runSub: "Escolha uma execução gravada (dados reais, gravados na mainnet Pacific) ou digite a sua e rode ao vivo. O pagador dos exemplos é uma carteira real da Pacific que paga um contrato com frequência; nada é assinado nem enviado.",
+        go: "Rodar ao vivo", running: "Rodando: a skill está pedindo ao Chain MCP… (~8–20 s)",
+        ex: { go: "destinatário conhecido", new: "destinatário novo", token: "para o contrato do USDC", balance: "mais do que tem", lookalike: "endereço imitador" },
+        meta: (n, s, h, when, live) => `<b>${n}</b> chamadas ao Chain MCP · ${s} s · bloco <b>${h}</b> · ${when} · <b>${live ? "ao vivo" : "gravado"}</b>`,
+        lane: { s: "Skill", m: "Chain MCP" },
+        r1s: "Onde está a rede?", r2s: "Quem são, quanto têm, qual o histórico?", r3s: "Aprofunda o que a rodada 2 mostrou — e estima o pagamento", decide: "Decide, citando as chamadas",
+        calls: (n, ms) => `chamada${n > 1 ? "s" : ""} · ${ms} ms`, tools: (t) => t.join(", "),
+        sev: { stop: "pare", review: "revisar", info: "nota", ok: "ok" },
+        txTitle: "Transação não assinada (a carteira do pagador assina)", callsTitle: "Todas as chamadas ao Chain MCP, em ordem (clique num [c…] acima para achá-la)",
+        cols: ["id", "rodada", "ferramenta", "argumentos", "por quê", "ms", "resposta"],
+        dTitle: "O que chama o quê, e em que ordem", dSub: "A skill nunca toca a rede sozinha: ela declara quais chamadas ao Chain MCP precisa, o fluxo as executa e a skill decide a partir das respostas. A rodada 3 só existe por causa do que a rodada 2 devolveu — essa é a composição.",
+        steps: [["O pedido", "parseRequest transforma as palavras numa intenção: pagador, destinatário, token, valor exato. Ambíguo → erro antes de qualquer chamada."], ["Rodada 1 — Skill → MCP", "get_block_number: o bloco atual, para a skill saber que blocos o histórico cobre."], ["Rodada 2 — Skill → MCP", "get_code ×2, get_balance, get_transaction_count ×2, get_gas_price, eth_call (saldo, blacklist do USDC), get_logs ×2 a cada 1.000 blocos (quem o pagador pagou / quem pagou o pagador)."], ["Resumo — só a Skill", "Destinatários conhecidos e quanto costumam receber; imitadores de destinatários conhecidos (mesmos primeiros e últimos caracteres)."], ["Rodada 3 — Skill → MCP", "Só o que a rodada 2 levantou: name()/symbol()/decimals() se o destinatário for contrato (um token?), a pegada do imitador e estimate_gas do próprio pagamento."], ["Decide — Skill", "PODE / REVISAR / PARE, cada motivo citando ids de chamadas; a transação não assinada, a menos que seja PARE."]],
+        footer: "Dados da mainnet Pharos Pacific pelo Chain MCP da Pharos (mcp.pharos.xyz). Nada nesta página assina ou envia transação.",
+        errNet: "Não consegui falar com o fluxo. Tente de novo em um minuto.",
+      },
+    };
+    const VPT = { GO: "PODE", REVIEW: "REVISAR", STOP: "PARE" };
+    // the skill writes its reasons in English; in PT the main ones are translated (addresses and numbers kept)
+    const PT = [
+      [/^A known payee: this wallet paid it (\d+)× in the last (\S+) blocks \(typical (\S+) (\w+)\)\.$/, (m) => `Destinatário conhecido: esta carteira pagou a ele ${m[1]}× nos últimos ${m[2].replace(/,/g, ".")} blocos (normalmente ${m[3].replace(/,/g, "§").replace(/\./g, ",").replace(/§/g, ".")} ${m[4]}).`],
+      [/^The payer holds (\S+) (\w+) — enough\.$/, (m) => `O pagador tem ${n(m[1])} ${m[2]} — suficiente.`],
+      [/^The payer holds (\S+) (\w+); the payment is (\S+) \w+\.$/, (m) => `O pagador tem ${n(m[1])} ${m[2]}; o pagamento é de ${n(m[3])} ${m[2]}.`],
+      [/^The payment estimates at (\S+) gas × (\S+) gwei = (\S+) PROS\.$/, (m) => `O pagamento estima ${m[1].replace(/,/g, ".")} de gás × ${m[2]} gwei = ${n(m[3])} PROS.`],
+      [/^The payee is a contract \((\d+) bytes of code\) — one this wallet pays routinely\.$/, (m) => `O destinatário é um contrato (${m[1]} bytes de código) — um que esta carteira paga com frequência.`],
+      [/^The payee is a contract \((\d+) bytes of code\), not a wallet — .*$/, (m) => `O destinatário é um contrato (${m[1]} bytes de código), não uma carteira — confirme que ele deve receber o token diretamente.`],
+      [/^The payee is the (\w+) contract itself: .*$/, (m) => `O destinatário é o próprio contrato do ${m[1]}: tokens enviados ao próprio contrato costumam se perder para sempre.`],
+      [/^USDC has blacklisted the payee: .*$/, () => "O USDC colocou o destinatário na blacklist: a transferência reverteria."],
+      [/^Estimating the payment fails: (.*)$/, (m) => `A estimativa do pagamento falha: ${m[1]}`],
+      [/^The payment would revert without a reason( — the payee is a contract that does not accept this (transfer|PROS payment).*)?\.$/, (m) => `O pagamento reverteria sem motivo${m[1] ? ` — o destinatário é um contrato que não aceita ${m[2] === "transfer" ? "esta transferência" : "este pagamento em PROS (não tem como receber PROS nativo)"}` : ""}.`],
+      [/^A first payment to this address: the wallet has not paid it in the last (\S+) blocks(, and the address has never sent a transaction itself)?\. Confirm it out of band\.$/, (m) => `Primeiro pagamento para este endereço: a carteira não pagou a ele nos últimos ${m[1].replace(/,/g, ".")} blocos${m[2] ? ", e o endereço nunca enviou uma transação" : ""}. Confirme por outro canal.`],
+      [/^(\S+) (\w+) is more than 10× what this wallet usually sends this payee \((\S+)\)\.$/, (m) => `${n(m[1])} ${m[2]} é mais de 10× o que esta carteira costuma enviar a este destinatário (${n(m[3])}).`],
+      [/^The payee (\S+) is NOT (\S+), whom this wallet has paid (\d+)× in the window — same first and last characters, different address\. This is how address-poisoning scams work(; .*?)?(; the look-alike holds no PROS and has never sent a transaction)?\.$/, (m) => `O destinatário ${m[1]} NÃO é ${m[2]}, a quem esta carteira pagou ${m[3]}× no período — mesmos primeiros e últimos caracteres, endereço diferente. É assim que funciona o golpe de envenenamento de endereço${m[5] ? "; o imitador não tem PROS e nunca enviou uma transação" : ""}.`],
+      [/^The payee is a token contract \((.+)\), not a wallet: .*$/, (m) => `O destinatário é um contrato de token (${m[1]}), não uma carteira: transferir para ele quase sempre é um erro e não tem volta.`],
+      [/^The payer holds (\S+) PROS and needs (\S+) \((.*)\)\.$/, (m) => `O pagador tem ${n(m[1])} PROS e precisa de ${n(m[2])} (${m[3].replace("gas + the amount", "gás + o valor").replace("gas", "gás")}).`],
+    ];
+    const SUMPT = [[/^GO — send (\S+) (\w+) to (\S+): the unsigned transaction is ready to sign\.$/, (m) => `PODE — enviar ${n(m[1])} ${m[2]} para ${m[3]}: a transação não assinada está pronta para assinar.`], [/^REVIEW — (.+): the unsigned transaction is prepared; read the reasons before signing\.$/, (m) => `REVISAR — ${m[1]}: a transação não assinada está preparada; leia os motivos antes de assinar.`], [/^STOP — (.+): nothing prepared\.$/, (m) => `PARE — ${m[1]}: nada preparado.`]];
+    const n = (s) => String(s).replace(/,/g, "§").replace(/\./g, ",").replace(/§/g, ".");
+    let lang = "en", runs = {}, sel = "lookalike", view = null, live = false;
+    try { const l = localStorage.getItem("pc-lang"); if (l === "pt" || l === "en") lang = l; else if ((navigator.language || "").startsWith("pt")) lang = "pt"; } catch {}
+    const t = () => T[lang];
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+    const tr = (s, rules) => { if (lang !== "pt") return s; for (const [re, f] of rules) { const m = re.exec(s); if (m) return f(m); } return s; };
+    const when = (iso) => new Date(iso).toLocaleString(lang === "pt" ? "pt-BR" : "en-US", { dateStyle: "medium", timeStyle: "short" });
+    const argText = (a) => Object.entries(a).map(([k, v]) => `${k}: ${typeof v === "object" ? JSON.stringify(v).replace(/"0x([0-9a-f]{8})[0-9a-f]{40,}([0-9a-f]{4})"/gi, '"0x$1…$2"') : v}`).join(", ");
+
+    function renderChips() {
+      $("chips").innerHTML = Object.entries(t().ex).filter(([k]) => runs[k]).map(([k, v]) => `<button data-k="${k}" class="${k === sel && !live ? "on" : ""}">${esc(v)}<span class="v" style="color:${{ GO: "var(--ok)", REVIEW: "var(--warn)", STOP: "var(--bad)" }[runs[k].decision.verdict]}">${lang === "pt" ? VPT[runs[k].decision.verdict] : runs[k].decision.verdict}</span></button>`).join("");
+      $("chips").querySelectorAll("button").forEach((b) => (b.onclick = () => { sel = b.dataset.k; live = false; view = runs[sel]; $("q").value = view.request; $("msg").textContent = ""; renderAll(); }));
+    }
+    function renderRun() {
+      const r = view;
+      if (!r) { $("out").innerHTML = ""; return; }
+      const v = r.decision.verdict;
+      const byRound = (k) => r.calls.filter((c) => c.round === k);
+      const ms = (cs) => cs.reduce((m, c) => Math.max(m, c.ms ?? 0), 0);
+      const tools = (cs) => [...new Set(cs.map((c) => c.tool))];
+      const round = (k, label) => { const cs = byRound(k); return [`<div class="cell s"><b>${esc(label)}</b></div>`, `<div class="cell m"><span class="n">${cs.length}</span> ${esc(t().calls(cs.length, ms(cs)))}<br><span class="num" style="font-size:11px">${esc(t().tools(tools(cs)))}</span></div>`]; };
+      const [s1, m1] = round(1, t().r1s), [s2, m2] = round(2, t().r2s), [s3, m3] = round(3, t().r3s);
+      const lanes = `<div class="lanes"><div class="lane-h s">${t().lane.s}</div>${s1}${s2}${s3}<div class="cell s"><b>${esc(t().decide)}</b><span class="num">${lang === "pt" ? VPT[v] : v}</span></div><div class="lane-h m">${t().lane.m}</div>${m1}${m2}${m3}<div class="cell empty"></div></div>`;
+      const reasons = r.decision.reasons.map((x) => `<li class="${x.severity}"><span class="sev">${t().sev[x.severity]}</span>${esc(tr(x.text, PT))}<span class="ev">${x.evidence.map((id) => `<button data-c="${id}">${id}</button>`).join("")}</span></li>`).join("");
+      const tx = r.decision.tx ? `<details open><summary>${t().txTitle}</summary><div class="code">${esc(JSON.stringify(r.decision.tx, null, 2))}</div></details>` : "";
+      const rows = r.calls.map((c) => `<tr id="row-${c.id}" class="${c.ok ? "" : "bad"}"><td class="num">${c.id}</td><td class="num">${c.round}</td><td class="t">${esc(c.tool)}</td><td class="num hide-s" style="font-size:11px">${esc(argText(c.args))}</td><td class="hide-s">${esc(c.why)}</td><td class="num">${c.ms ?? ""}</td><td class="num" style="font-size:11px">${c.ok ? esc(c.digest) : esc(c.error)}</td></tr>`).join("");
+      $("out").innerHTML = `<p class="meta">${t().meta(r.calls.length, (r.ms / 1000).toFixed(1), r.chain.head.toLocaleString(lang === "pt" ? "pt-BR" : "en-US"), esc(when(r.ranAt ?? r.recordedAt)), live)}</p>${r.note ? `<div class="note">${esc(r.note)}</div>` : ""}${lanes}
+        <div class="verdict ${v}"><span class="big">${lang === "pt" ? VPT[v] : v}</span><p>${esc(tr(r.decision.summary, SUMPT).replace(/^(GO|REVIEW|STOP|PODE|REVISAR|PARE) — /, ""))}</p></div><ul class="reasons">${reasons}</ul>${tx}
+        <details open><summary>${t().callsTitle}</summary><div class="callwrap"><table class="calls"><thead><tr>${t().cols.map((c, i) => `<th class="${i === 3 || i === 4 ? "hide-s" : ""}">${c}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div></details>`;
+      $("out").querySelectorAll(".ev button").forEach((b) => (b.onclick = () => {
+        const ids = [...b.closest("li").querySelectorAll(".ev button")].map((x) => x.dataset.c);
+        $("out").querySelectorAll(".calls tr.hl").forEach((x) => x.classList.remove("hl"));
+        ids.forEach((id) => $(`row-${id}`)?.classList.add("hl"));
+        $(`row-${b.dataset.c}`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }));
+    }
+    function renderDiagram() {
+      const W = 920, H = 250, box = (x, y, w, h, fill, stroke, label, sub = "") => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${fill}" stroke="${stroke}"/><text x="${x + w / 2}" y="${y + h / 2 - (sub ? 5 : -4)}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#17181c">${esc(label)}</text>${sub ? `<text x="${x + w / 2}" y="${y + h / 2 + 12}" text-anchor="middle" font-size="10.5" fill="#686a72" font-family="IBM Plex Mono">${esc(sub)}</text>` : ""}`;
+      const arrow = (x1, y1, x2, y2, label) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#686a72" stroke-width="1.4" marker-end="url(#a)"/>${label ? `<text x="${(x1 + x2) / 2 + 4}" y="${(y1 + y2) / 2 - 4}" font-size="10" fill="#686a72" font-family="IBM Plex Mono">${esc(label)}</text>` : ""}`;
+      const S = "#efe9fc", Ss = "#5b2bd6", M = "#e1f3f2", Ms = "#0b7a75";
+      $("diagram").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img"><defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#686a72"/></marker></defs>
+        ${box(10, 20, 110, 46, "#fff", "#cbc5b6", lang === "pt" ? "pedido" : "request", "texto → intent")}
+        ${box(150, 20, 130, 46, S, Ss, "round1()", "skill")}${box(310, 20, 150, 46, S, Ss, "needs()", "skill")}${box(490, 20, 120, 46, S, Ss, "digest()", "skill · puro")}${box(640, 20, 130, 46, S, Ss, "followUp()", "skill")}${box(800, 20, 110, 46, S, Ss, "decide()", "skill")}
+        ${box(150, 170, 130, 56, M, Ms, "get_block_number", "1 call")}${box(310, 170, 150, 56, M, Ms, "get_code · get_balance", "eth_call · get_logs …")}${box(640, 170, 130, 56, M, Ms, "eth_call · get_balance", "estimate_gas")}${box(800, 170, 110, 56, "#fff", "#cbc5b6", "GO/REVIEW/STOP", "+ unsigned tx")}
+        ${arrow(120, 43, 148, 43)}${arrow(200, 66, 200, 168, "1")}${arrow(230, 168, 230, 68)}${arrow(280, 43, 308, 43)}${arrow(370, 66, 370, 168, "2")}${arrow(400, 168, 400, 68)}${arrow(460, 43, 488, 43)}${arrow(610, 43, 638, 43)}${arrow(690, 66, 690, 168, "3")}${arrow(720, 168, 720, 68)}${arrow(770, 43, 798, 43)}${arrow(855, 66, 855, 168)}
+        <text x="10" y="120" font-size="11" fill="#5b2bd6" font-weight="700">SKILL ↑</text><text x="10" y="138" font-size="11" fill="#0b7a75" font-weight="700">CHAIN MCP ↓</text></svg>`;
+      $("steps").innerHTML = t().steps.map(([a, b]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join("");
+    }
+    function renderStatic() {
+      document.documentElement.lang = lang === "pt" ? "pt-BR" : "en";
+      document.querySelectorAll("[data-i]").forEach((el) => (el.textContent = t()[el.dataset.i]));
+      document.querySelectorAll(".lang button").forEach((b) => b.classList.toggle("on", b.dataset.lang === lang));
+      $("footer").innerHTML = `${esc(t().footer)} · <a href="https://github.com/juhzinho/pharos-mcp-flow" target="_blank" rel="noopener">GitHub</a> · <a href="https://github.com/juhzinho/pharos-mcp-flow#readme" target="_blank" rel="noopener">README</a>`;
+    }
+    function renderAll() { renderStatic(); renderChips(); renderRun(); renderDiagram(); }
+    document.querySelectorAll(".lang button").forEach((b) => (b.onclick = () => { lang = b.dataset.lang; try { localStorage.setItem("pc-lang", lang); } catch {} renderAll(); }));
+    $("ask").onsubmit = async (e) => {
+      e.preventDefault();
+      $("go").disabled = true; $("msg").className = "muted"; $("msg").textContent = t().running;
+      try {
+        const r = await fetch("/api/flow", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ request: $("q").value }) });
+        const j = await r.json().catch(() => ({ ok: false, error: t().errNet }));
+        if (!j.ok) throw new Error(j.error);
+        view = j; live = true; $("msg").textContent = ""; renderAll();
+      } catch (er) { $("msg").className = "err"; $("msg").textContent = er.message && er.message !== "Failed to fetch" ? er.message : t().errNet; }
+      finally { $("go").disabled = false; }
+    };
+    const keys = ["go", "new", "token", "balance", "lookalike"];
+    const got = await Promise.all(keys.map((k) => fetch(`runs/${k}.json`).then((r) => r.json()).catch(() => null)));
+    keys.forEach((k, i) => got[i] && (runs[k] = got[i]));
+    view = runs[sel] ?? null;
+    if (view) $("q").value = view.request;
+    renderAll();
+  </script>
+</body>
+</html>
